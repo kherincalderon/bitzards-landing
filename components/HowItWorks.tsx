@@ -67,7 +67,7 @@ export const HowItWorks = () => {
       id="how-it-works"
       className="bg-light-blue py-20"
     >
-      <div className="max-w-[1440px] mx-auto px-20">
+      <div className="max-w-[1440px] mx-auto px-8 sm:px-20">
         <h2 className="text-3xl md:text-4xl font-light mb-24">
           <span className="text-gradient-primary">Your AI Transformation</span>{' '}
           <br />

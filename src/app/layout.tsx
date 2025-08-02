@@ -7,7 +7,8 @@ import { inter, sora } from './fonts';
 
 export const metadata: Metadata = {
   title: 'Bitzards | The Witzards of the Code',
-  description: 'AI Solutions',
+  description:
+    'Automate. Scale. Succeed. We build AI engines to power your business growth.',
 };
 
 export default function RootLayout({

@@ -53,7 +53,7 @@ export const Hero = () => {
 
       <div
         ref={scrollIconRef}
-        className="absolute bottom-2 left-1/2 -translate-x-1/2"
+        className="absolute bottom-0 sm:bottom-2 left-1/2 -translate-x-1/2"
       >
         <Link
           href="#about"

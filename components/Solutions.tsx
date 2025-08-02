@@ -70,7 +70,7 @@ export const Solutions = () => {
   return (
     // 1. FONDO DE SECCIÓN 'light-blue' APLICADO
     <section ref={sectionRef} id="solutions" className="bg-light-blue">
-      <div className="max-w-[1440px] mx-auto px-20 py-20">
+      <div className="max-w-[1440px] mx-auto px-8 sm:px-20 py-20">
         <div className="text-center max-w-3xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-light">
             Let a Bitzard Build Your AI Engine
