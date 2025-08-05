@@ -5,7 +5,7 @@ type ProblemContent = typeof pageContent.problem;
 export const ProblemSection = ({ content }: { content: ProblemContent }) => (
   <section className="problem-section bg-dark-blue py-20">
     <div className="max-w-3xl mx-auto px-6 text-center">
-      <h2 className="text-3xl md:text-4xl font-bold">{content.headline}</h2>
+      <h2 className="text-3xl md:text-4xl font-light">{content.headline}</h2>
       <p className="mt-4 text-gray-400">{content.intro}</p>
       <ul className="mt-12 space-y-6 text-left">
         {content.checklist.map((item, index) => (

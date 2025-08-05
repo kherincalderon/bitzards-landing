@@ -9,7 +9,7 @@ export const SocialProofSection = ({
 }) => (
   <section className="bg-light-blue py-20">
     <div className="max-w-3xl mx-auto px-6 text-center">
-      <h2 className="text-3xl md:text-4xl font-bold">{content.headline}</h2>
+      <h2 className="text-3xl md:text-4xl font-light">{content.headline}</h2>
       <div className="mt-12 bg-dark-blue p-10 rounded-xl shadow-lg">
         <p className="italic text-2xl text-gray-300">
           &ldquo;{content.testimonial.quote}&rdquo;

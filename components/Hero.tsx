@@ -23,10 +23,10 @@ export const Hero = () => {
     // --- PADDINGS AJUSTADOS PARA MÓVIL Y DESKTOP ---
     <section
       id="home"
-      className="bg-light-blue h-[80vh] flex flex-col justify-center items-center text-center px-6 md:px-20 relative pt-16 sm:pt-24"
+      className="bg-light-blue h-[80vh] flex flex-col justify-center items-center text-center px-6 md:px-20 relative pt-16 sm:pt-24 aurora-background"
     >
       <div className="max-w-4xl">
-        <h1 className="text-4xl md:text-6xl font-light leading-tight">
+        <h1 className="text-4xl md:text-6xl font-bold leading-tight">
           Stop Drowning in Busywork. <br />
           <span className="text-gradient-primary">Start Scaling with AI</span>
         </h1>

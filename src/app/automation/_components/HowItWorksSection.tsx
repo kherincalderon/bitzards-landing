@@ -9,7 +9,7 @@ export const HowItWorksSection = ({
 }) => (
   <section className="how-it-works-section bg-dark-blue py-20">
     <div className="max-w-[1440px] mx-auto px-6 md:px-20">
-      <h2 className="text-3xl md:text-5xl font-bold text-center mb-16">
+      <h2 className="text-3xl md:text-5xl font-light text-center mb-16">
         {content.headline}
       </h2>
       <div className="relative flex flex-col md:flex-row justify-between gap-8">

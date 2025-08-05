@@ -20,7 +20,7 @@ export const pageContent = {
     subheadline:
       'At Bitzards, we transform your manual processes into intelligent, automated systems that work for you 24/7. Free your team, optimize your costs, and scale without limits.',
     primaryCta: 'Schedule a Demo',
-    secondaryCta: 'See Use Cases ↓',
+    secondaryCta: 'See Use Cases',
   },
   problem: {
     headline: 'Is your team spending more time on operations than innovation?',

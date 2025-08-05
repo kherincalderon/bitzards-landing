@@ -8,7 +8,7 @@ type FaqContent = typeof pageContent.faq;
 export const FaqSection = ({ content }: { content: FaqContent }) => (
   <section className="bg-light-blue py-20">
     <div className="max-w-3xl mx-auto px-6">
-      <h2 className="text-3xl md:text-5xl font-bold text-center mb-12">
+      <h2 className="text-3xl md:text-5xl font-light text-center mb-12">
         {content.headline}
       </h2>
       <div className="space-y-2">
