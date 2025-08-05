@@ -56,7 +56,43 @@
 /* 5. Creamos nuestras clases de utilidad personalizadas */
 @layer utilities {
   .text-gradient-primary {
-    /* Usamos las variables dentro de las clases de Tailwind */
-    @apply bg-gradient-to-r from-[var(--color-dark-green)] to-[var(--color-accent-green)] bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-dark-green to-accent-green bg-clip-text text-transparent;
+  }
+
+  /* --- NUEVAS CLASES PARA EL FONDO AURORA --- */
+  .aurora-background {
+    position: relative;
+    overflow: hidden;
+  }
+  .aurora-background::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 200%;
+    height: 200%;
+    background-image: radial-gradient(
+        circle at 20% 20%,
+        var(--color-dark-green) 0%,
+        transparent 25%
+      ),
+      radial-gradient(
+        circle at 80% 70%,
+        var(--color-accent-green) 0%,
+        transparent 25%
+      );
+    transform: translate(-50%, -50%);
+    animation: aurora 20s linear infinite;
+    opacity: 0.15;
+    filter: blur(100px);
+  }
+}
+
+@keyframes aurora {
+  from {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
   }
 }

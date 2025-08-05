@@ -33,8 +33,7 @@ export const Footer = () => {
           <div className="col-span-12 lg:col-span-5">
             <h2 className="text-2xl font-bold mb-2">BITZARDS</h2>
             <p className="text-gray-400 max-w-xs">
-              Automate. Scale. Succeed. We build AI engines to power your
-              business growth.
+              Custom AI Solutions to Automate, Optimize, and Outperform.
             </p>
             <div className="flex items-center space-x-4 mt-6">
               {socialLinks.map(({ Icon, href, label }) => (

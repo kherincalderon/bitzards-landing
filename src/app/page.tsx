@@ -9,7 +9,7 @@ import { Testimonials } from '../../components/Testimonials';
 import { CallToAction } from '../../components/CallToAction';
 const HomePage = () => {
   return (
-    <>
+    <section id="home">
       <Hero />
       <PainPoints />
       <Solutions />
@@ -18,7 +18,7 @@ const HomePage = () => {
       <FreeAudit />
       <Testimonials />
       <CallToAction />
-    </>
+    </section>
   );
 };
 

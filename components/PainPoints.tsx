@@ -15,24 +15,24 @@ const painPointsData = [
       "You're stuck doing the same manual work every day — answering the same questions, updating spreadsheets, chasing follow-ups. It's eating your time (and patience).",
   },
   {
-    title: 'Lead Leakage & Slow Follow-ups',
+    title: 'Leaking Revenue',
     description:
-      "Potential leads send messages, but they get missed. By the time you respond, they've already gone to a competitor. Your process is just too slow.",
+      'Potential leads are falling through the cracks. Missed messages, slow responses, and clunky processes are quietly costing you sales.',
   },
   {
-    title: 'Inconsistent Customer Service',
+    title: 'No Time to Scale',
     description:
-      "Your team is great, but they can't be online 24/7. Customers get different answers to the same questions, or worse, no answer at all outside of business hours.",
+      'You want to grow — but the more clients you get, the more overwhelmed your team becomes. Growth shouldn’t feel like a burden.',
   },
   {
-    title: 'Failure to Scale',
+    title: 'Many Tools, Not Enough Flow',
     description:
-      'Every new customer adds more manual work. You can\'t grow your business because you and your team are trapped working "in" the business, not "on" it.',
+      'Your stack is full, but nothing talks to each other. Data lives in silos, and automating anything feels like a tech maze.',
   },
   {
-    title: 'Data Silos & Blind Spots',
+    title: 'Bots That Feel… Like Bots',
     description:
-      "Important information is scattered across different apps and tools. You can't get a clear picture of your business performance without tedious manual reporting.",
+      'You’ve tried chatbots, but they felt cold, rigid, or worse — annoying. Customers bounce, and youre back to square one.',
   },
 ];
 

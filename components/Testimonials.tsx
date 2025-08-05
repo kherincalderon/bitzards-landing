@@ -43,7 +43,7 @@ const testimonialsData = [
     quote:
       'The AI chatbot handles all the initial customer questions, freeing up my team to tackle the complex issues. Customer satisfaction is way up.',
     author: 'Ana B.',
-    rating: 4,
+    rating: 5,
   },
 ];
 
