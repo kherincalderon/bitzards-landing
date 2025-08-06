@@ -21,6 +21,7 @@ import {
   GoogleReCaptchaProvider,
   useGoogleReCaptcha,
 } from 'react-google-recaptcha-v3';
+import { PopupModal } from 'react-calendly';
 
 // --- Contenido y Tipos ---
 const formContent = {
@@ -149,6 +150,7 @@ const LeadCaptureFormComponent = () => {
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isCalendlyOpen, setIsCalendlyOpen] = useState(false);
 
   const mainContainerRef = useRef<HTMLDivElement>(null);
 
@@ -261,12 +263,27 @@ const LeadCaptureFormComponent = () => {
           <p className="mt-8 text-lg font-sora font-semibold">
             {formContent.thankYou.cta}
           </p>
-          <Link
-            href="#"
+
+          {/* --- 3. BOTÓN ACTUALIZADO PARA ABRIR EL POP-UP --- */}
+          <button
+            onClick={() => setIsCalendlyOpen(true)}
             className="mt-6 inline-block bg-accent-green text-black font-sora font-semibold rounded-full px-8 py-3 hover:bg-light-green transition-colors"
           >
             {formContent.thankYou.ctaButton}
-          </Link>
+          </button>
+
+          {/* --- 4. WIDGET DE CALENDLY (INVISIBLE HASTA QUE SE ABRE) --- */}
+          <PopupModal
+            url="https://calendly.com/kherincalderon/ai-free-audit" // <-- IMPORTANTE: REEMPLAZA ESTA URL
+            onModalClose={() => setIsCalendlyOpen(false)}
+            open={isCalendlyOpen}
+            pageSettings={{
+              backgroundColor: '0B1120',
+              primaryColor: '4CFCE1',
+              textColor: 'F8FAFC',
+            }}
+            rootElement={document.body}
+          />
         </div>
       </main>
     );

@@ -5,6 +5,9 @@ import { useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { ArrowDown } from 'lucide-react';
 import { gsap } from 'gsap';
+import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
+
+gsap.registerPlugin(ScrollToPlugin);
 
 export const Hero = () => {
   const scrollIconRef = useRef<HTMLDivElement>(null);
@@ -20,12 +23,13 @@ export const Hero = () => {
   }, []);
 
   return (
-    // --- PADDINGS AJUSTADOS PARA MÓVIL Y DESKTOP ---
     <section
       id="home"
       className="bg-light-blue h-[90vh] flex flex-col justify-center items-center text-center px-6 md:px-20 relative pt-16 sm:pt-24 aurora-background"
     >
-      <div className="max-w-4xl">
+      {/* --- CAMBIO REALIZADO AQUÍ --- */}
+      {/* Añadimos 'relative' y 'z-10' para poner este contenido en una capa superior */}
+      <div className="max-w-4xl relative z-10">
         <h1 className="text-4xl md:text-6xl font-bold leading-tight">
           Stop Drowning in Busywork. <br />
           <span className="text-gradient-primary">Start Scaling with AI</span>
@@ -53,7 +57,7 @@ export const Hero = () => {
 
       <div
         ref={scrollIconRef}
-        className="absolute bottom-0 sm:bottom-2 left-1/2 -translate-x-1/2"
+        className="absolute bottom-0 sm:bottom-2 left-1/2 -translate-x-1/2 z-10" // Añadimos z-10 aquí también
       >
         <Link
           href="#about"
