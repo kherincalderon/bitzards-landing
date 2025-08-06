@@ -1,23 +1,16 @@
 /* app/globals.css */
 
-/* 1. La nueva directiva principal de Tailwind v4 */
 @import 'tailwindcss';
 
-/* 2. Definimos nuestros "design tokens" como variables CSS en :root */
 :root {
-  /* Paleta de Colores Bitzards */
   --color-accent-green: #4cfce1;
   --color-light-green: #99fdd9;
   --color-dark-green: #2d9686;
-  --color-light-blue: #0f172a; /* Main Background */
-  --color-dark-blue: #0b1120; /* Card Background */
+  --color-light-blue: #0b1120; /* Main Background */
+  --color-dark-blue: #0f172a; /* Card Background */
   --color-primary-text: #f8fafc; /* White */
-
-  /* Puedes añadir más variables si lo necesitas */
 }
 
-/* 3. Mapeamos nuestras variables CSS al tema de Tailwind */
-/* Esto nos permite usar clases como 'bg-accent-green' o 'font-sora' */
 @theme inline {
   --color-accent-green: var(--color-accent-green);
   --color-light-green: var(--color-light-green);
@@ -25,24 +18,19 @@
   --color-light-blue: var(--color-light-blue);
   --color-dark-blue: var(--color-dark-blue);
   --color-primary-text: var(--color-primary-text);
-
-  /* Mapeamos las variables de fuente que vienen de Next.js */
   --font-inter: var(--font-inter);
   --font-sora: var(--font-sora);
 }
 
-/* 4. Aplicamos los estilos base usando nuestras variables */
 @layer base {
   html {
     scroll-behavior: smooth;
   }
-
   body {
     background: var(--color-light-blue);
     color: var(--color-primary-text);
     font-family: var(--font-inter), sans-serif;
   }
-
   h1,
   h2,
   h3,
@@ -53,13 +41,34 @@
   }
 }
 
-/* 5. Creamos nuestras clases de utilidad personalizadas */
+/* --- SECCIÓN MODIFICADA --- */
 @layer utilities {
+  /* --- CLASE DE GRADIENTE ACTUALIZADA CON TÉCNICA DE TRANSICIÓN --- */
   .text-gradient-primary {
-    @apply bg-gradient-to-r from-dark-green to-accent-green bg-clip-text text-transparent;
+    /* Gradiente base (de oscuro a claro) */
+    @apply relative bg-gradient-to-r from-dark-green to-accent-green bg-clip-text text-transparent;
+    /* Aseguramos que el contenedor no tenga contenido para evitar duplicados */
+    display: inline-block;
   }
 
-  /* --- NUEVAS CLASES PARA EL FONDO AURORA --- */
+  /* Creamos una capa superior con el gradiente inverso */
+  .text-gradient-primary::before {
+    /* Le pasamos el texto a través de un atributo data-text */
+    content: attr(data-text);
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+
+    /* Gradiente inverso (de claro a oscuro) */
+    @apply bg-gradient-to-r from-accent-green to-dark-green bg-clip-text text-transparent;
+
+    /* Aplicamos la nueva animación de transición (fade) */
+    animation: gradient-fade 8s ease-in-out infinite;
+  }
+
   .aurora-background {
     position: relative;
     overflow: hidden;
@@ -85,6 +94,19 @@
     animation: aurora 20s linear infinite;
     opacity: 0.15;
     filter: blur(100px);
+  }
+}
+
+/* --- KEYFRAMES MODIFICADOS --- */
+@keyframes gradient-fade {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
   }
 }
 

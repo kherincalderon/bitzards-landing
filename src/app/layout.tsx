@@ -6,7 +6,7 @@ import { Footer } from '../../components/Footer';
 import { inter, sora } from './fonts';
 
 export const metadata: Metadata = {
-  title: 'Bitzards | The Witzards of the Code',
+  title: 'Bitzards | The Wizards of the Code',
   description: 'Custom AI Solutions to Automate, Optimize, and Outperform.',
 };
 

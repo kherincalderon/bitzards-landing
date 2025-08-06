@@ -12,8 +12,8 @@ const socialLinks = [
 const menuLinks = {
   solutions: [
     { href: '/automation', label: 'AI & Automation' },
-    { href: '/solutions', label: 'Conversational Chatbots' },
-    { href: '/solutions', label: 'Custom GPT Development' },
+    { href: '/chatbots', label: 'Conversational Chatbots' },
+    { href: '/gpts', label: 'Custom GPT Development' },
   ],
   company: [
     { href: '/about', label: 'About Us' },
