@@ -1,95 +1,146 @@
 // components/Navbar.tsx
 'use client';
 
-import { useState, MouseEvent } from 'react';
+import { useState, MouseEvent, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation'; // CAMBIO 1: Importar el hook
-import { Menu, X } from 'lucide-react';
+import { usePathname } from 'next/navigation';
+import { Menu, X, ChevronDown } from 'lucide-react';
 import { gsap } from 'gsap';
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
 
 gsap.registerPlugin(ScrollToPlugin);
 
-// CAMBIO 2: El href de Home DEBE ser '/' para la navegación.
 const navLinks = [
   { href: '/', label: 'Home' },
-  { href: '#about', label: 'About us' },
-  { href: '#solutions', label: 'Solutions' },
-  { href: '#how-it-works', label: 'How It Works' },
-  { href: '#case-studies', label: 'Case Studies' },
+  { href: '/#about', label: 'About us' },
+  {
+    label: 'Solutions',
+    isDropdown: true,
+    subLinks: [
+      { href: '/automation', label: 'AI & Automation' },
+      { href: '/chatbots', label: 'Conversational Chatbots' },
+      { href: '/gpts', label: 'Custom GPTs' },
+    ],
+  },
+  { href: '/#how-it-works', label: 'How It Works' },
+  { href: '/#case-studies', label: 'Case Studies' },
 ];
 
 export const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const pathname = usePathname(); // Obtener la ruta actual (ej: '/', '/blog')
+  const [isSolutionsOpen, setIsSolutionsOpen] = useState(false);
+  const pathname = usePathname();
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
-  // CAMBIO 3: Lógica de click inteligente
   const handleClick = (e: MouseEvent<HTMLAnchorElement>, href: string) => {
-    // Si el menú móvil está abierto, lo cerramos en cualquier click
-    if (isMenuOpen) {
-      toggleMenu();
-    }
-
-    // Caso 1: El enlace es un ancla de scroll (empieza con #)
-    if (href.startsWith('#')) {
+    if (isMenuOpen) toggleMenu();
+    if (href.startsWith('/#')) {
       e.preventDefault();
-      gsap.to(window, {
-        duration: 1.2,
-        scrollTo: href,
-        ease: 'power2.inOut',
-      });
-      return;
-    }
-
-    // Caso 2: El enlace es a la Home ('/') Y YA ESTAMOS en la Home.
-    if (href === '/' && pathname === '/') {
+      if (pathname !== '/') {
+        window.location.href = `/${href}`;
+      } else {
+        gsap.to(window, {
+          duration: 1.2,
+          scrollTo: href.substring(1),
+          ease: 'power2.inOut',
+        });
+      }
+    } else if (href === '/' && pathname === '/') {
       e.preventDefault();
-      // Hacemos scroll a la parte superior de la página
-      gsap.to(window, {
-        duration: 1.2,
-        scrollTo: 0, // 0 significa el inicio del documento
-        ease: 'power2.inOut',
-      });
-      return;
+      gsap.to(window, { duration: 1.2, scrollTo: 0, ease: 'power2.inOut' });
     }
-
-    // Caso 3: El enlace es a la Home ('/') pero estamos en OTRA PÁGINA.
-    // No hacemos NADA aquí. Dejamos que el <Link> de Next.js haga su trabajo
-    // de navegar a la página principal. No se llama a e.preventDefault().
   };
+
+  useEffect(() => {
+    const handleClickOutside = (event: globalThis.MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsSolutionsOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [dropdownRef]);
 
   return (
     <header className="fixed top-0 left-0 w-full z-50 bg-dark-blue/80 backdrop-blur-sm text-primary-text">
-      <div className="max-w-[1440px] mx-auto px-20">
+      <div className="max-w-[1440px] mx-auto px-8 md:px-20">
         <nav className="flex h-[90px] items-center justify-between">
-          {/* CAMBIO 4: El logo usa la nueva lógica y su href es '/' */}
           <Link
             href="/"
             onClick={(e) => handleClick(e, '/')}
-            className="text-2xl font-semibold font-sora"
+            className="text-2xl font-semibold font-sora hover-text-gradient transition-colors duration-300"
           >
             BITZARDS
           </Link>
 
           <div className="hidden items-center space-x-8 md:flex font-sora">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                onClick={(e) => handleClick(e, link.href)}
-                className="hover:text-gray-300 transition-colors"
-              >
-                {link.label}
-              </Link>
-            ))}
+            {navLinks.map((link) =>
+              link.isDropdown ? (
+                <div
+                  key={link.label}
+                  className="relative group"
+                  ref={dropdownRef}
+                >
+                  <button
+                    onClick={() => setIsSolutionsOpen(!isSolutionsOpen)}
+                    className="flex items-center gap-1 transition-colors duration-300 hover-text-gradient"
+                    aria-haspopup="true"
+                    aria-expanded={isSolutionsOpen}
+                  >
+                    {link.label}
+                    <ChevronDown
+                      size={16}
+                      className={`transition-transform duration-300 group-hover:rotate-180 ${
+                        isSolutionsOpen ? 'rotate-180' : ''
+                      }`}
+                    />
+                  </button>
+                  <div
+                    className={`absolute top-full left-1/2 -translate-x-1/2 mt-4 w-64 bg-dark-blue rounded-lg shadow-lg p-2 transition-all duration-300 origin-top
+                                 opacity-0 scale-95 invisible group-hover:opacity-100 group-hover:scale-100 group-hover:visible
+                                 ${
+                                   isSolutionsOpen
+                                     ? '!opacity-100 !scale-100 !visible'
+                                     : ''
+                                 }`}
+                  >
+                    <ul className="space-y-1">
+                      {link.subLinks?.map((subLink) => (
+                        <li key={subLink.href}>
+                          <Link
+                            href={subLink.href}
+                            className="block w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-light-blue hover:text-primary-text rounded-md"
+                            onClick={() => setIsSolutionsOpen(false)}
+                          >
+                            {subLink.label}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              ) : (
+                <Link
+                  key={link.href}
+                  href={link.href!}
+                  onClick={(e) => handleClick(e, link.href!)}
+                  className="transition-colors duration-300 hover-text-gradient"
+                >
+                  {link.label}
+                </Link>
+              )
+            )}
           </div>
 
           <div className="hidden md:block">
             <Link
-              href="#free-audit"
-              onClick={(e) => handleClick(e, '#free-audit')}
+              href="/#free-audit"
+              onClick={(e) => handleClick(e, '/#free-audit')}
               className="rounded-full border border-accent-green px-6 py-2 text-accent-green transition-all hover:bg-accent-green hover:text-light-blue font-sora"
             >
               Get My Free AI Audit
@@ -108,25 +159,43 @@ export const Navbar = () => {
         </nav>
       </div>
 
-      {/* Menú móvil (también usa la nueva lógica) */}
       <div
         className={`absolute top-0 left-0 flex h-screen w-full flex-col items-center justify-center space-y-8 bg-dark-blue transition-transform duration-300 ease-in-out md:hidden z-40 font-sora ${
           isMenuOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
-        {navLinks.map((link) => (
-          <Link
-            key={link.href}
-            href={link.href}
-            onClick={(e) => handleClick(e, link.href)}
-            className="text-2xl hover:text-gray-300"
-          >
-            {link.label}
-          </Link>
-        ))}
+        {navLinks.map((link) =>
+          link.isDropdown ? (
+            <div key={link.label} className="text-center">
+              <span className="text-2xl text-accent-green">{link.label}</span>
+              <ul className="mt-2 space-y-2">
+                {link.subLinks?.map((subLink) => (
+                  <li key={subLink.href}>
+                    <Link
+                      href={subLink.href}
+                      onClick={toggleMenu}
+                      className="text-lg text-gray-300 hover:text-primary-text"
+                    >
+                      {subLink.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : (
+            <Link
+              key={link.href}
+              href={link.href!}
+              onClick={(e) => handleClick(e, link.href!)}
+              className="text-2xl hover:text-gray-300"
+            >
+              {link.label}
+            </Link>
+          )
+        )}
         <Link
-          href="#free-audit"
-          onClick={(e) => handleClick(e, '#free-audit')}
+          href="/#free-audit"
+          onClick={(e) => handleClick(e, '/#free-audit')}
           className="mt-4 rounded-full border border-accent-green px-8 py-4 text-xl text-accent-green transition-all hover:bg-accent-green hover:text-light-blue"
         >
           Get My Free AI Audit
