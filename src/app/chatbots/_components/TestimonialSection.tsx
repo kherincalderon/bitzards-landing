@@ -10,7 +10,7 @@ export const TestimonialSection = ({
 }) => (
   <section className="testimonial-section bg-dark-blue py-20">
     <div className="max-w-4xl mx-auto px-6">
-      <h2 className="text-3xl md:text-5xl font-bold text-center mb-12">
+      <h2 className="text-3xl md:text-5xl font-ligth text-center mb-12">
         {content.headline}
       </h2>
       <div className="testimonial-card bg-light-blue p-10 rounded-xl md:flex items-center gap-8 shadow-2xl shadow-light-blue/5">

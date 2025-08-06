@@ -12,9 +12,10 @@ export const ProblemSection = ({ content }: { content: ProblemContent }) => (
             key={index}
             className="problem-column bg-dark-blue p-8 rounded-xl"
           >
-            <col.icon size={40} className="text-accent-green mx-auto" />
-            <h3 className="text-2xl font-sora font-bold mt-6">{col.title}</h3>
-            <p className="mt-2 text-gray-300">{col.text}</p>
+            <h3 className="text-2xl font-sora font-semibold text-accent-green">
+              {col.title}
+            </h3>
+            <p className="mt-4 text-gray-300">{col.text}</p>
           </div>
         ))}
       </div>

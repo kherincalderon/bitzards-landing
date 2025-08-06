@@ -54,7 +54,7 @@ export const FreeAudit = () => {
             </ul>
 
             <Link
-              href="#free-audit"
+              href="/demo"
               className="inline-block bg-accent-green text-black font-sora font-semibold rounded-full px-8 py-3 mt-8 hover:bg-light-green transition-colors"
             >
               Get My Free AI Audit

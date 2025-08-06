@@ -6,7 +6,7 @@ type CtaContent = typeof pageContent.finalCta;
 export const CtaSection = ({ content }: { content: CtaContent }) => (
   <section className="bg-light-blue py-24">
     <div className="max-w-5xl mx-auto px-6 text-center">
-      <h2 className="text-3xl md:text-5xl font-bold">{content.headline}</h2>
+      <h2 className="text-3xl md:text-5xl font-light">{content.headline}</h2>
       <p className="mt-4 text-lg text-gray-300">{content.subheadline}</p>
       <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-8 text-left">
         {content.options.map((box, index) => (

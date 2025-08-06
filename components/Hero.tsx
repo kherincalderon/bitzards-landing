@@ -37,13 +37,13 @@ export const Hero = () => {
         </p>
         <div className="mt-10 flex flex-col sm:flex-row justify-center items-center gap-4">
           <Link
-            href="#free-audit"
+            href="/demo"
             className="rounded-full bg-white text-black font-sora font-semibold px-8 py-3 w-full sm:w-auto hover:bg-gray-200 transition-colors duration-300"
           >
             Get My Free AI Audit
           </Link>
           <Link
-            href="#solutions"
+            href="/demo"
             className="border border-gray-400 rounded-full px-8 py-3 w-full sm:w-auto hover:bg-white hover:text-black transition-colors duration-300 font-sora"
           >
             Get a Free Demo

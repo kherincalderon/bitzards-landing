@@ -22,7 +22,7 @@ export const CallToAction = () => {
               </p>
             </div>
             <Link
-              href="#free-audit"
+              href="/demo"
               className="inline-block bg-light-green text-black font-sora font-semibold rounded-full px-8 py-3 mt-8 w-fit hover:bg-white transition-colors"
             >
               Get My Free AI Audit

@@ -139,8 +139,7 @@ export const Navbar = () => {
 
           <div className="hidden md:block">
             <Link
-              href="/#free-audit"
-              onClick={(e) => handleClick(e, '/#free-audit')}
+              href="/demo"
               className="rounded-full border border-accent-green px-6 py-2 text-accent-green transition-all hover:bg-accent-green hover:text-light-blue font-sora"
             >
               Get My Free AI Audit
@@ -194,8 +193,7 @@ export const Navbar = () => {
           )
         )}
         <Link
-          href="/#free-audit"
-          onClick={(e) => handleClick(e, '/#free-audit')}
+          href="/demo"
           className="mt-4 rounded-full border border-accent-green px-8 py-4 text-xl text-accent-green transition-all hover:bg-accent-green hover:text-light-blue"
         >
           Get My Free AI Audit

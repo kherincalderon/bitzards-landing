@@ -17,17 +17,16 @@ import {
   CheckCircle2,
 } from 'lucide-react';
 import Link from 'next/link';
+import {
+  GoogleReCaptchaProvider,
+  useGoogleReCaptcha,
+} from 'react-google-recaptcha-v3';
 
-// Contenido del formulario (preparado para i18next)
+// --- Contenido y Tipos ---
 const formContent = {
   mainTitle: "Let's Design Your AI-Powered Future.",
   mainSubtitle:
     'A few key details will help our AI architects understand your unique challenges. This is the first step toward your free audit or live demo.',
-  steps: [
-    { title: 'About You' },
-    { title: 'Your Challenge' },
-    { title: 'Your Channels' },
-  ],
   step1: {
     title: "First, let's get to know you.",
     fields: {
@@ -91,16 +90,31 @@ const formContent = {
   },
 };
 
-// Componente para los indicadores de paso (Stepper)
+interface FormErrors {
+  name?: string;
+  email?: string;
+  company?: string;
+  goal?: string;
+  industry?: string;
+  urgency?: string;
+  channels?: string;
+}
+
+// --- Componente de Indicador de Pasos ---
 const StepIndicator: FC<{ currentStep: number; totalSteps: number }> = ({
   currentStep,
   totalSteps,
 }) => (
-  <div className="flex items-center w-full max-w-sm mx-auto mb-12 font-sora">
+  <div className="flex items-center justify-center w-full mb-12 font-sora">
     {Array.from({ length: totalSteps }, (_, i) => i + 1).map((step) => (
-      <div key={step} className="flex items-center flex-grow">
+      <div
+        key={step}
+        className={`flex items-center ${
+          step < totalSteps ? 'w-1/3' : 'w-auto'
+        }`}
+      >
         <div
-          className={`w-8 h-8 rounded-full grid place-items-center transition-all duration-500 ${
+          className={`w-8 h-8 rounded-full grid place-items-center flex-shrink-0 transition-all duration-500 ${
             currentStep >= step
               ? 'bg-accent-green text-dark-blue'
               : 'bg-dark-blue border-2 border-light-blue'
@@ -110,7 +124,7 @@ const StepIndicator: FC<{ currentStep: number; totalSteps: number }> = ({
         </div>
         {step < totalSteps && (
           <div
-            className={`flex-grow h-1 transition-all duration-500 mx-2 ${
+            className={`w-full h-1 transition-all duration-500 mx-2 ${
               currentStep > step ? 'bg-accent-green' : 'bg-light-blue'
             }`}
           ></div>
@@ -120,7 +134,8 @@ const StepIndicator: FC<{ currentStep: number; totalSteps: number }> = ({
   </div>
 );
 
-const LeadCapturePage = () => {
+// --- Componente Principal del Formulario ---
+const LeadCaptureFormComponent = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({
     name: '',
@@ -128,18 +143,25 @@ const LeadCapturePage = () => {
     company: '',
     goal: '',
     industry: '',
-    urgency: '',
+    urgency: 'In 1-3 months',
     channels: [] as string[],
   });
+  const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const formStepsRef = useRef<HTMLDivElement>(null);
+  const mainContainerRef = useRef<HTMLDivElement>(null);
+
+  const { executeRecaptcha } = useGoogleReCaptcha();
 
   const handleInputChange = (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value, type } = e.target;
+    if (errors[name as keyof FormErrors]) {
+      setErrors((prev) => ({ ...prev, [name]: undefined }));
+    }
+
     if (type === 'checkbox') {
       const { checked } = e.target as HTMLInputElement;
       setFormData((prev) => ({
@@ -153,45 +175,53 @@ const LeadCapturePage = () => {
     }
   };
 
-  const goToStep = (step: number) => {
-    const currentStepEl = formStepsRef.current?.querySelector(
-      `.form-step-${currentStep}`
-    );
-    const nextStepEl = formStepsRef.current?.querySelector(
-      `.form-step-${step}`
-    );
-
-    if (currentStepEl && nextStepEl) {
-      gsap.to(currentStepEl, {
-        autoAlpha: 0,
-        duration: 0.3,
-        onComplete: () => {
-          setCurrentStep(step);
-          gsap.to(nextStepEl, { autoAlpha: 1, duration: 0.3, delay: 0.1 });
-        },
-      });
-    } else {
-      setCurrentStep(step);
+  const validateStep = (step: number): boolean => {
+    const newErrors: FormErrors = {};
+    if (step === 1) {
+      if (!formData.name.trim()) newErrors.name = 'Full name is required.';
+      if (!formData.email.trim()) {
+        newErrors.email = 'Work email is required.';
+      } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+        newErrors.email = 'Email format is invalid.';
+      }
+      if (!formData.company.trim())
+        newErrors.company = 'Company name is required.';
+    } else if (step === 2) {
+      if (!formData.goal) newErrors.goal = 'Please select a primary goal.';
+      if (!formData.industry) newErrors.industry = 'Please select an industry.';
+      if (!formData.urgency) newErrors.urgency = 'Please select a timeline.';
+    } else if (step === 3) {
+      if (formData.channels.length === 0)
+        newErrors.channels = 'Please select at least one channel.';
     }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleNextStep = () => {
+    if (validateStep(currentStep)) {
+      setCurrentStep(currentStep + 1);
+    }
+  };
+
+  const handlePrevStep = () => {
+    setCurrentStep(currentStep - 1);
   };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    if (!validateStep(3) || !executeRecaptcha) return;
+
     setIsSubmitting(true);
 
     try {
+      const recaptchaToken = await executeRecaptcha('form_submission');
       const response = await fetch('/api/submit-form', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...formData, recaptchaToken }),
       });
-
-      if (!response.ok) {
-        throw new Error('Server response was not OK');
-      }
-
+      if (!response.ok) throw new Error('Server response was not OK');
       setIsSubmitted(true);
     } catch (error) {
       console.error('Error submitting form:', error);
@@ -202,17 +232,24 @@ const LeadCapturePage = () => {
   };
 
   useLayoutEffect(() => {
-    gsap.from('.form-wrapper', {
-      autoAlpha: 0,
-      y: 50,
-      duration: 1,
-      ease: 'power2.out',
-    });
+    // Lógica de animación corregida y robusta
+    const ctx = gsap.context(() => {
+      gsap.from('.form-wrapper', {
+        autoAlpha: 0,
+        y: 50,
+        duration: 1,
+        ease: 'power2.out',
+      });
+    }, mainContainerRef);
+    return () => ctx.revert(); // Función de limpieza
   }, []);
 
   if (isSubmitted) {
     return (
-      <main className="flex items-center justify-center min-h-screen text-center px-6 bg-light-blue">
+      <main
+        ref={mainContainerRef}
+        className="flex items-center justify-center min-h-screen text-center px-6 bg-light-blue"
+      >
         <div className="bg-dark-blue p-8 md:p-16 rounded-2xl max-w-2xl">
           <CheckCircle2 size={64} className="text-accent-green mx-auto mb-6" />
           <h2 className="text-3xl md:text-4xl font-bold text-gradient-primary">
@@ -236,9 +273,12 @@ const LeadCapturePage = () => {
   }
 
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center py-12 px-4 bg-light-blue">
+    <main
+      ref={mainContainerRef}
+      className="min-h-screen flex flex-col items-center justify-start pt-24 md:pt-32 pb-12 px-4 bg-light-blue"
+    >
       <div className="form-wrapper w-full max-w-xl md:max-w-2xl">
-        <div className="text-center mb-12 mt-16 md:mt-0">
+        <div className="text-center mb-12">
           <h1 className="text-3xl md:text-5xl font-bold">
             {formContent.mainTitle}
           </h1>
@@ -248,8 +288,8 @@ const LeadCapturePage = () => {
         <div className="bg-dark-blue p-6 md:p-12 rounded-2xl shadow-2xl shadow-dark-blue/20">
           <StepIndicator currentStep={currentStep} totalSteps={3} />
 
-          <form onSubmit={handleSubmit}>
-            <div ref={formStepsRef} className="relative min-h-[30rem]">
+          <form onSubmit={handleSubmit} noValidate>
+            <div className="relative min-h-[32rem]">
               {/* PASO 1 */}
               <div
                 className={`form-step-1 space-y-5 absolute w-full transition-opacity duration-300 ${
@@ -274,8 +314,15 @@ const LeadCapturePage = () => {
                     value={formData.name}
                     onChange={handleInputChange}
                     placeholder={formContent.step1.fields.name.placeholder}
-                    className="w-full mt-2 p-3 bg-light-blue rounded-lg border-2 border-transparent focus:border-accent-green focus:outline-none"
+                    className={`w-full mt-2 p-3 bg-light-blue rounded-lg border-2 focus:outline-none ${
+                      errors.name
+                        ? 'border-red-500'
+                        : 'border-transparent focus:border-accent-green'
+                    }`}
                   />
+                  {errors.name && (
+                    <p className="text-red-500 text-sm mt-1">{errors.name}</p>
+                  )}
                 </div>
                 <div>
                   <label
@@ -292,8 +339,15 @@ const LeadCapturePage = () => {
                     value={formData.email}
                     onChange={handleInputChange}
                     placeholder={formContent.step1.fields.email.placeholder}
-                    className="w-full mt-2 p-3 bg-light-blue rounded-lg border-2 border-transparent focus:border-accent-green focus:outline-none"
+                    className={`w-full mt-2 p-3 bg-light-blue rounded-lg border-2 focus:outline-none ${
+                      errors.email
+                        ? 'border-red-500'
+                        : 'border-transparent focus:border-accent-green'
+                    }`}
                   />
+                  {errors.email && (
+                    <p className="text-red-500 text-sm mt-1">{errors.email}</p>
+                  )}
                 </div>
                 <div>
                   <label
@@ -310,12 +364,21 @@ const LeadCapturePage = () => {
                     value={formData.company}
                     onChange={handleInputChange}
                     placeholder={formContent.step1.fields.company.placeholder}
-                    className="w-full mt-2 p-3 bg-light-blue rounded-lg border-2 border-transparent focus:border-accent-green focus:outline-none"
+                    className={`w-full mt-2 p-3 bg-light-blue rounded-lg border-2 focus:outline-none ${
+                      errors.company
+                        ? 'border-red-500'
+                        : 'border-transparent focus:border-accent-green'
+                    }`}
                   />
+                  {errors.company && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.company}
+                    </p>
+                  )}
                 </div>
                 <button
                   type="button"
-                  onClick={() => goToStep(2)}
+                  onClick={handleNextStep}
                   className="!mt-8 w-full bg-accent-green text-black font-sora font-semibold rounded-full p-3 flex items-center justify-center gap-2"
                 >
                   {formContent.step1.nextButton} <ArrowRight size={20} />
@@ -335,11 +398,15 @@ const LeadCapturePage = () => {
                   <label className="text-sm font-medium text-gray-400">
                     {formContent.step2.subtitle}
                   </label>
-                  <div className="mt-2 grid grid-cols-1 gap-2">
+                  <div className="mt-2 grid grid-cols-1 md:grid-cols-2 gap-2">
                     {formContent.step2.goals.map((goal) => (
                       <label
                         key={goal}
-                        className="flex items-center p-3 bg-light-blue rounded-lg border-2 border-transparent has-[:checked]:border-accent-green cursor-pointer transition-colors"
+                        className={`flex items-center p-3 bg-light-blue rounded-lg border-2 cursor-pointer transition-colors ${
+                          formData.goal === goal
+                            ? 'border-accent-green'
+                            : 'border-transparent'
+                        }`}
                       >
                         <input
                           type="radio"
@@ -354,6 +421,9 @@ const LeadCapturePage = () => {
                       </label>
                     ))}
                   </div>
+                  {errors.goal && (
+                    <p className="text-red-500 text-sm mt-1">{errors.goal}</p>
+                  )}
                 </div>
                 <div>
                   <label
@@ -368,7 +438,11 @@ const LeadCapturePage = () => {
                     name="industry"
                     value={formData.industry}
                     onChange={handleInputChange}
-                    className="w-full mt-2 p-3 bg-light-blue rounded-lg border-2 border-transparent focus:border-accent-green focus:outline-none appearance-none"
+                    className={`w-full mt-2 p-3 bg-light-blue rounded-lg border-2 focus:outline-none appearance-none ${
+                      errors.industry
+                        ? 'border-red-500'
+                        : 'border-transparent focus:border-accent-green'
+                    }`}
                   >
                     <option value="" disabled>
                       {formContent.step2.industry.placeholder}
@@ -379,18 +453,50 @@ const LeadCapturePage = () => {
                       </option>
                     ))}
                   </select>
+                  {errors.industry && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.industry}
+                    </p>
+                  )}
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-400">
+                    {formContent.step2.urgency.label}
+                  </label>
+                  <div className="mt-2 grid grid-cols-3 gap-2">
+                    {formContent.step2.urgency.options.map((option) => (
+                      <label
+                        key={option}
+                        className={`flex items-center justify-center p-3 bg-light-blue rounded-lg border-2 cursor-pointer transition-colors text-sm ${
+                          formData.urgency === option
+                            ? 'border-accent-green'
+                            : 'border-transparent'
+                        }`}
+                      >
+                        <input
+                          type="radio"
+                          name="urgency"
+                          value={option}
+                          checked={formData.urgency === option}
+                          onChange={handleInputChange}
+                          className="hidden"
+                        />
+                        <span>{option}</span>
+                      </label>
+                    ))}
+                  </div>
                 </div>
                 <div className="flex flex-col sm:flex-row gap-4 !mt-8">
                   <button
                     type="button"
-                    onClick={() => goToStep(1)}
+                    onClick={handlePrevStep}
                     className="w-full sm:w-1/3 bg-dark-blue border border-gray-700 text-gray-300 font-sora font-semibold rounded-full p-3 flex items-center justify-center gap-2"
                   >
                     <ArrowLeft size={20} /> {formContent.step2.backButton}
                   </button>
                   <button
                     type="button"
-                    onClick={() => goToStep(3)}
+                    onClick={handleNextStep}
                     className="w-full sm:w-2/3 bg-accent-green text-black font-sora font-semibold rounded-full p-3 flex items-center justify-center gap-2"
                   >
                     {formContent.step2.nextButton} <ArrowRight size={20} />
@@ -415,7 +521,11 @@ const LeadCapturePage = () => {
                     {formContent.step3.channels.map((channel) => (
                       <label
                         key={channel}
-                        className="flex items-center p-3 bg-light-blue rounded-lg border-2 border-transparent has-[:checked]:border-accent-green cursor-pointer transition-colors"
+                        className={`flex items-center p-3 bg-light-blue rounded-lg border-2 cursor-pointer transition-colors ${
+                          formData.channels.includes(channel)
+                            ? 'border-accent-green'
+                            : 'border-transparent'
+                        }`}
                       >
                         <input
                           type="checkbox"
@@ -439,11 +549,16 @@ const LeadCapturePage = () => {
                       </label>
                     ))}
                   </div>
+                  {errors.channels && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.channels}
+                    </p>
+                  )}
                 </div>
-                <div className="flex flex-col sm:flex-row gap-4 !mt-8">
+                <div className="flex flex-col sm:flex-row gap-4 !mt-12">
                   <button
                     type="button"
-                    onClick={() => goToStep(2)}
+                    onClick={handlePrevStep}
                     className="w-full sm:w-1/3 bg-dark-blue border border-gray-700 text-gray-300 font-sora font-semibold rounded-full p-3 flex items-center justify-center gap-2"
                   >
                     <ArrowLeft size={20} /> {formContent.step3.backButton}
@@ -469,4 +584,19 @@ const LeadCapturePage = () => {
   );
 };
 
-export default LeadCapturePage;
+// --- Componente Contenedor para reCAPTCHA ---
+const LeadCapturePageWithCaptcha = () => (
+  <GoogleReCaptchaProvider
+    reCaptchaKey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!}
+    scriptProps={{
+      async: false,
+      defer: false,
+      appendTo: 'head',
+      nonce: undefined,
+    }}
+  >
+    <LeadCaptureFormComponent />
+  </GoogleReCaptchaProvider>
+);
+
+export default LeadCapturePageWithCaptcha;

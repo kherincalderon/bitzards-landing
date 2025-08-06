@@ -12,7 +12,7 @@ export const HowItWorksSection = ({
     className="how-it-works-section bg-light-blue py-20"
   >
     <div className="max-w-4xl mx-auto px-6">
-      <h2 className="text-3xl md:text-5xl font-bold text-center mb-24">
+      <h2 className="text-3xl md:text-5xl font-light text-center mb-24">
         {content.headline}
       </h2>
       <div className="relative">
@@ -32,7 +32,7 @@ export const HowItWorksSection = ({
               )}
             </div>
             <div className="col-span-10 md:col-span-11 -mt-2">
-              <h3 className="text-2xl md:text-3xl font-bold text-accent-green">
+              <h3 className="text-2xl md:text-3xl font-semibold text-accent-green">
                 {item.title}
               </h3>
               <p className="mt-2 text-gray-300">{item.description}</p>
