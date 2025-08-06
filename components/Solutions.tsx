@@ -11,14 +11,15 @@ import {
   type LucideProps,
 } from 'lucide-react';
 import { ForwardRefExoticComponent, RefAttributes } from 'react';
+import Link from 'next/link'; // Importar Link
 
 gsap.registerPlugin(ScrollTrigger);
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 type IconComponent = ForwardRefExoticComponent<
   Omit<LucideProps, 'ref'> & RefAttributes<SVGSVGElement>
 >;
 
+// 1. AÑADIMOS la propiedad 'href' a cada objeto
 const solutionsData = [
   {
     Icon: Workflow,
@@ -26,6 +27,7 @@ const solutionsData = [
     description:
       'Tired of doing the same tasks over and over? We automate your workflows — from lead follow-ups to internal ops — so you can scale without burnout.',
     tagline: 'Save hours weekly. Focus on what matters.',
+    href: '/automation', // Enlace a la página de servicio
   },
   {
     Icon: BotMessageSquare,
@@ -33,6 +35,7 @@ const solutionsData = [
     description:
       'Engage your customers 24/7 with bots that actually sound like you. Built for conversions, trained on your brand, and ready to serve — anytime, anywhere.',
     tagline: 'Human-like. Sales-ready. Always on.',
+    href: '/chatbots', // Enlace a la página de servicio
   },
   {
     Icon: Sparkles,
@@ -40,6 +43,7 @@ const solutionsData = [
     description:
       "Your own AI assistant, trained on your data, brand voice, and workflows. From answering FAQs to powering internal tools — it's like cloning your best team member.",
     tagline: 'Private. Smart. Fully yours.',
+    href: '/gpts', // Enlace a la página de servicio
   },
 ];
 
@@ -47,6 +51,7 @@ export const Solutions = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
+    // ... (la lógica de la animación no cambia)
     const section = sectionRef.current;
     if (!section) return;
     const cards = gsap.utils.toArray('.solution-card');
@@ -68,7 +73,6 @@ export const Solutions = () => {
   }, []);
 
   return (
-    // 1. FONDO DE SECCIÓN 'light-blue' APLICADO
     <section ref={sectionRef} id="solutions" className="bg-light-blue">
       <div className="max-w-[1440px] mx-auto px-8 sm:px-20 py-20">
         <div className="text-center max-w-3xl mx-auto">
@@ -82,18 +86,32 @@ export const Solutions = () => {
         </div>
 
         <div className="mt-16 grid grid-cols-12 gap-6">
-          {solutionsData.map(({ Icon, title, description, tagline }, index) => (
-            <div
-              key={index}
-              // 2. EFECTOS HOVER ELIMINADOS, FONDO DE TARJETA 'dark-blue'
-              className="solution-card col-span-12 md:col-span-6 lg:col-span-4 bg-dark-blue p-8 rounded-xl flex flex-col text-center items-center"
-            >
-              <Icon size={40} className="text-accent-green mb-6" />
-              <h3 className="text-2xl font-bold">{title}</h3>
-              <p className="mt-4 text-gray-300 flex-grow">{description}</p>
-              <p className="mt-6 font-semibold text-primary-text">{tagline}</p>
-            </div>
-          ))}
+          {solutionsData.map(
+            ({ Icon, title, description, tagline, href }, index) => (
+              <div
+                key={index}
+                className="solution-card col-span-12 md:col-span-6 lg:col-span-4 bg-dark-blue p-8 rounded-xl flex flex-col text-center items-center"
+              >
+                {/* Contenedor para que el botón se alinee al fondo */}
+                <div className="flex flex-col items-center text-center flex-grow">
+                  <Icon size={40} className="text-accent-green mb-6" />
+                  <h3 className="text-2xl font-bold">{title}</h3>
+                  <p className="mt-4 text-gray-300">{description}</p>
+                </div>
+
+                <div className="mt-6 w-full">
+                  <p className="font-semibold text-primary-text">{tagline}</p>
+                  {/* 2. AÑADIMOS EL BOTÓN/ENLACE AQUÍ */}
+                  <Link
+                    href={href}
+                    className="mt-6 inline-block w-full rounded-full border-2 border-accent-green py-2 px-6 font-sora text-accent-green transition-colors hover:bg-accent-green hover:text-dark-blue"
+                  >
+                    Learn More
+                  </Link>
+                </div>
+              </div>
+            )
+          )}
         </div>
       </div>
     </section>

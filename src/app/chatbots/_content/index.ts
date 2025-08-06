@@ -13,7 +13,7 @@ export type FaqItem = { q: string; a: string };
 export const pageContent = {
   hero: {
     headlineGradient: 'Conversations that Convert.',
-    headlineWhite: '24/7. Zero Wait Time.',
+    headlineWhite: 'Zero Wait Time.',
     subheadline:
       'We build AI-powered chatbots and voicebots that capture leads, answer questions, and delight your customers—even while you sleep.',
     primaryCta: 'Book a Live Demo',
